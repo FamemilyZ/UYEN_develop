@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UYEN - เบิกวัสดุ</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css?v=1.1">
+    <link rel="stylesheet" href="inventory.css?v=1.1">
+    <link rel="stylesheet" href="withdraw.css?v=1.1">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="nav-logo">
+                <img src="Item/Group%20466.png" alt="logo" style="height: 40px;"
+                    onerror="this.src='https://cdn-icons-png.flaticon.com/512/3214/3214341.png'">
+            </div>
+            <ul class="nav-links">
+                <li><a href="receive-print.html">รับงานพิมพ์</a></li>
+                <li><a href="dashboard.html">จัดการผู้ใช้</a></li>
+                <li><a href="inventory.html">จัดการคลัง</a></li>
+                <li class="active"><a href="withdraw.html">เบิกวัสดุ</a></li>
+                <li><a href="receive-material.html">รับวัสดุ</a></li>
+
+                <li><a href="report.html">รายงานข้อมูล</a></li>
+            </ul>
+        </div>
+        <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="username" style="margin: 0; font-weight: 500;">User_Genrate</span>
+                <span class="role-badge"
+                    style="background-color: #6236FF; color: white; padding: 4px 12px; border-radius: 8px; font-size: 14px; font-weight: 600;">Employee</span>
+            </div>
+            <div style="width: 1px; height: 28px; background-color: #ADADAD;"></div>
+            <button class="btn-logout" onclick="window.location.href='index.html'">ออกจากระบบ</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-main withdraw-main">
+        <!-- Left Panel: Form -->
+        <aside class="withdraw-sidebar">
+            <h1 class="withdraw-title">เบิกวัสดุ</h1>
+
+            <div class="withdraw-form">
+                <div class="withdraw-form-group">
+                    <label style="color: #334155; font-size: 15px;">ชื่อผู้เบิกวัสดุ</label>
+                    <input type="text" id="withdrawer-name" value="User_Genrate" class="withdraw-input" readonly style="font-size: 16px; color: #9ca3af; background-color: #f8fafc; border: 1px solid #d1d5db; outline: none; cursor: not-allowed;">
+                </div>
+
+                <div class="withdraw-form-group">
+                    <label style="color: #334155; font-size: 15px;">วัสดุ ( ประเภท )</label>
+                    <select id="withdraw-material" class="withdraw-select blue-text" onchange="updateSummary()" style="font-size: 16px; color: #0088FF; background-color: #fff; border: 1px solid #e2e8f0; text-align-last: center;">
+                        <option value="" disabled selected hidden>เลือกวัสดุ</option>
+                        <option value="A5 (สติ๊กเกอร์)" data-stock="คลัง" data-unit="หน่วย">A5 (สติ๊กเกอร์)</option>
+                        <option value="กระดาษ A4" data-stock="200" data-unit="รีน">กระดาษ A4</option>
+                        <option value="หมึกสีดำ EPSON" data-stock="50" data-unit="ขวด">หมึกสีดำ EPSON</option>
+                        <option value="เทปใส 3M" data-stock="20" data-unit="ม้วน">เทปใส 3M</option>
+                    </select>
+                </div>
+
+                <div class="withdraw-form-group">
+                    <label style="color: #334155; font-size: 15px;">จำนวนที่ต้องการเบิกวัสดุ</label>
+                    <input type="number" id="withdraw-qty" class="withdraw-input blue-text" min="1" max="1000" oninput="if(this.value > 1000) this.value = 1000; if(this.value < 0) this.value = ''; updateSummary()" style="font-size: 16px; color: #0088FF; background-color: #fff; border: 1px solid #e2e8f0;">
+                </div>
+
+                <div class="withdraw-form-group">
+                    <label style="color: #334155; font-size: 15px;">หมายเหตุ</label>
+                    <input type="text" id="withdraw-note" class="withdraw-input blue-text" style="font-size: 16px; color: #0088FF; background-color: #fff; border: 1px solid #e2e8f0;">
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="withdraw-summary-section">
+                <h3 class="summary-title" style="margin-bottom: 25px; text-align: center; font-size: 24px; color: #1e293b;">วัสดุที่เลือก</h3>
+                <div style="background-color: #F4FAFF; border-radius: 12px; padding: 25px 20px;">
+                    <div class="summary-box summary-mat-box" id="summary-mat-type" style="margin-bottom: 20px; border: 1px solid #0088FF; background-color: #fff; border-radius: 10px; padding: 15px; font-size: 18px; color: #1e293b; text-align: center;">วัสดุ</div>
+                    
+                    <div class="summary-grid" style="display: flex; gap: 15px; align-items: flex-start;">
+                        <div class="summary-left" style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                            <div class="summary-label" style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 12px;">คงเหลือ</div>
+                            <div class="summary-box summary-stock-box" id="summary-stock" style="padding: 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 120px; border: 1px solid #0088FF; border-radius: 10px; background-color: #fff; width: 100%; box-sizing: border-box;">
+                                <div style="font-size: 32px; font-weight: 700; color: #0f172a; line-height: 1.2;">คลัง</div>
+                                <div class="unit-text" style="font-size: 22px; color: #0088FF; font-weight: 500; margin-top: 4px;">หน่วย</div>
+                            </div>
+                        </div>
+                        <div class="summary-right" style="flex: 1; display: flex; flex-direction: column; align-items: center; width: auto;">
+                            <div class="summary-label" style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 12px;">จำนวนที่เบิก</div>
+                            <div class="qty-display-box" id="summary-qty" style="width: 100%; height: 120px; display: flex; justify-content: center; align-items: center; border: 1px solid #0088FF; border-radius: 10px; font-size: 56px; font-weight: 500; color: #0088FF; background-color: #fff; box-sizing: border-box;"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-submit-withdraw" style="margin-top: 20px; background-color: #f0fdf4; color: #16a34a; border: 1px solid #22c55e; border-radius: 10px; font-size: 22px; font-weight: 800; padding: 15px; width: 100%;" onclick="openConfirmModal()">เบิกวัสดุ</button>
+            </div>
+        </aside>
+
+        <!-- Right Panel: Table -->
+        <section class="withdraw-content" style="padding-left: 30px;">
+            <div style="margin-bottom: 25px;">
+                <h1 class="withdraw-table-title" style="margin-bottom: 15px; font-size: 28px;">รายการเบิกวัสดุ</h1>
+            </div>
+
+            <div class="withdraw-table-container">
+                <table class="data-table withdraw-table" style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">ชื่อผู้เบิก</th>
+                            <th style="width: 25%;">วัสดุ ( ประเภท )</th>
+                            <th style="width: 15%;">จำนวนที่เบิก</th>
+                            <th style="width: 20%;">วัน - เวลา</th>
+                            <th style="width: 20%;">หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background-color: #fff;">
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">User_Genrate</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">A5 ( สติ๊กเกอร์ )</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">150</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">01 มี.ค. 2026 09:30</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">ใช้งานพิมพ์ด่วน</td>
+                        </tr>
+                        <tr class="alt-row" style="background-color: #f8fafc;">
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">อำพร ใจดี</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">กระดาษ ( A4 )</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">5</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">05 มี.ค. 2026 14:15</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">เบิกใช้ในสำนักงาน</td>
+                        </tr>
+                        <tr style="background-color: #fff;">
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">User_Genrate</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">หมึกสีดำ ( EPSON )</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">2</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">10 มี.ค. 2026 10:00</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">เติมเครื่องพิมพ์ชั้น 2</td>
+                        </tr>
+                        <tr class="alt-row" style="background-color: #f8fafc;">
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">กัญญา มีสุข</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">เทปใส ( 3M )</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">3</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">12 มี.ค. 2026 11:45</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">ห่อพัสดุส่งลูกค้า</td>
+                        </tr>
+                        <tr style="background-color: #fff;">
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">User_Genrate</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">A5 ( สติ๊กเกอร์ )</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">200</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: solid #fff;">15 มี.ค. 2026 16:20</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">สต็อคแผนก</td>
+                        </tr>
+                        <tr class="alt-row" style="background-color: #f8fafc;">
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">ประสิทธิ์ พรหมดี</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">กระดาษ ( A4 )</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">10</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">18 มี.ค. 2026 08:50</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">รายงานประจำเดือน</td>
+                        </tr>
+                        <tr style="background-color: #fff;">
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">มานะ เข้มแข็ง</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">หมึกสีดำ ( EPSON )</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">1</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">22 มี.ค. 2026 13:10</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #fff;">เบิกเติมด่วน</td>
+                        </tr>
+                        <tr class="alt-row" style="background-color: #f8fafc;">
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">ปรีชา ใจกว้าง</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">เทปใส ( 3M )</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">5</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">25 มี.ค. 2026 15:30</td>
+                            <td class="bold-text" style="color: #4b5563; padding: 20px 10px; border-bottom: 1px solid #f8fafc;">ใช้งานทั่วไป</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <!-- Confirm Withdraw Modal -->
+    <div class="modal-overlay" id="modal-confirm-withdraw" style="display: none; z-index: 1000;">
+        <div class="modal"
+            style="width: 450px; border-radius: 12px; overflow: hidden; padding: 0; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+            <div style="background-color: #335e8d; color: white; padding: 20px; text-align: center;">
+                <h2 style="font-size: 22px; font-weight: 600; margin: 0; color: white;">ต้องการเบิกวัสดุ ใช่หรือไม่ ?
+                </h2>
+            </div>
+            <div class="bg-white" style="padding: 30px;">
+
+                <div style="margin-bottom: 15px;">
+                    <label
+                        style="font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 6px; display: block;">ชื่อผู้เบิก</label>
+                    <input type="text" id="confirm-name"
+                        style="width:100%; height: 38px; background-color: #f1f5f9; border: none; border-radius: 6px; padding: 0 15px; font-size: 13px; color: #94a3b8;"
+                        readonly>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label
+                        style="font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 6px; display: block;">วัสดุที่เลือก</label>
+                    <input type="text" id="confirm-material"
+                        style="width:100%; height: 38px; background-color: #f1f5f9; border: none; border-radius: 6px; padding: 0 15px; font-size: 13px; color: #94a3b8;"
+                        readonly>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label
+                        style="font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 6px; display: block;">จำนวนวัสดุที่ต้องการเบิก</label>
+                    <input type="text" id="confirm-qty"
+                        style="width:100%; height: 38px; background-color: #f1f5f9; border: none; border-radius: 6px; padding: 0 15px; font-size: 13px; color: #94a3b8;"
+                        readonly>
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <label
+                        style="font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 6px; display: block;">หมายเหตุ</label>
+                    <input type="text" id="confirm-note"
+                        style="width:100%; height: 38px; background-color: #f1f5f9; border: none; border-radius: 6px; padding: 0 15px; font-size: 13px; color: #94a3b8;"
+                        readonly>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                    <button
+                        style="background-color: #dcfce7; color: #16a34a; border: 1px solid #22c55e; border-radius: 6px; padding: 8px 30px; font-weight: 700; font-size: 14px; cursor: pointer;"
+                        onclick="showStatusModal('withdraw-success')">ยืนยันการเบิกวัสดุ</button>
+                    <button
+                        style="background-color: white; color: #ef4444; border: 1px solid #ef4444; border-radius: 6px; padding: 8px 30px; font-weight: 700; font-size: 14px; cursor: pointer;"
+                        onclick="closeModal('modal-confirm-withdraw')">ยกเลิก</button>
+                    <!-- Hidden Test Error Button -->
+                    <button style="opacity: 0; position: absolute; pointer-events: none;"
+                        onclick="showStatusModal('withdraw-error')">Test Error</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Modals -->
+    <!-- Withdraw Success Modal -->
+    <div class="modal-overlay" id="modal-withdraw-success" style="display: none; z-index: 2000;">
+        <div class="modal"
+            style="width: 450px; border-radius: 12px; overflow: hidden; padding: 0; text-align: center; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+            <div style="background-color: #22c55e; color: white; padding: 30px;">
+                <h2 style="font-size: 26px; font-weight: 700; margin: 0; color: white;">เบิกวัสดุสำเร็จ</h2>
+            </div>
+            <div class="bg-white" style="padding: 40px 30px;">
+                <div
+                    style="width: 100px; height: 100px; border-radius: 50%; background-color: #22c55e; color: white; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: bold; margin: 0 auto 25px;">
+                    ✓
+                </div>
+                <h3 style="font-size: 22px; font-weight: 700; color: #000; margin-bottom: 10px;">
+                    ข้อมูลได้รับการบันทึกแล้ว</h3>
+                <p style="color: #94a3b8; font-size: 12px; margin: 0;">หน้าต่างจะถูกปิดใน 2 วินาที</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Error Modal -->
+    <div class="modal-overlay" id="modal-withdraw-error" style="display: none; z-index: 2000;">
+        <div class="modal"
+            style="width: 450px; border-radius: 12px; overflow: hidden; padding: 0; text-align: center; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+            <div style="background-color: #e60000; color: white; padding: 30px;">
+                <h2 style="font-size: 26px; font-weight: 700; margin: 0; color: white;">เบิกวัสดุไม่สำเร็จ</h2>
+            </div>
+            <div class="bg-white" style="padding: 40px 30px;">
+                <div
+                    style="width: 100px; height: 100px; border-radius: 50%; background-color: #e60000; color: white; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: bold; margin: 0 auto 25px;">
+                    ♻
+                </div>
+                <h3 style="font-size: 22px; font-weight: 700; color: #000; margin-bottom: 10px;">ไม่สามารถเบิกวัสดุได้
+                </h3>
+                <p style="color: #94a3b8; font-size: 12px; margin: 0;">หน้าต่างจะถูกปิดใน 2 วินาที</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateSummary() {
+            const materialSelect = document.getElementById('withdraw-material');
+            const qty = document.getElementById('withdraw-qty').value;
+
+            const matBox = document.getElementById('summary-mat-type');
+            const stockBox = document.getElementById('summary-stock');
+            const qtyBox = document.getElementById('summary-qty');
+
+            if (materialSelect.selectedIndex > 0) {
+                const option = materialSelect.options[materialSelect.selectedIndex];
+                const matName = option.value;
+                const stock = option.dataset.stock;
+                const unit = option.dataset.unit;
+
+                matBox.innerHTML = matName;
+                stockBox.innerHTML = '<div style="font-size: 32px; font-weight: 700; color: #0f172a; line-height: 1.2;">' + stock + '</div><div class="unit-text" style="font-size: 22px; color: #0ea5e9; font-weight: 500;">' + unit + '</div>';
+            } else {
+                matBox.innerText = 'วัสดุ';
+                stockBox.innerHTML = '<div style="font-size: 32px; font-weight: 700; color: #0f172a; line-height: 1.2;">คลัง</div><div class="unit-text" style="font-size: 22px; color: #0ea5e9; font-weight: 500;">หน่วย</div>';
+            }
+
+            qtyBox.innerText = qty ? qty : '';
+        }
+
+        function flashError(element) {
+            const originalBorder = element.style.borderColor;
+            element.style.borderColor = '#ef4444'; // Red color
+            setTimeout(() => {
+                element.style.borderColor = originalBorder;
+            }, 2000);
+        }
+
+        function openConfirmModal() {
+            const nameInput = document.getElementById('withdrawer-name');
+            const matSelect = document.getElementById('withdraw-material');
+            const typeSelect = document.getElementById('withdraw-type');
+            const qtyInput = document.getElementById('withdraw-qty');
+
+            let isValid = true;
+
+            if (!nameInput.value.trim()) {
+                isValid = false;
+                flashError(nameInput);
+            }
+            if (matSelect.selectedIndex <= 0) {
+                isValid = false;
+                flashError(matSelect);
+            }
+            if (!qtyInput.value.trim()) {
+                isValid = false;
+                flashError(qtyInput);
+            }
+
+            if (!isValid) return;
+
+            const matText = matSelect.options[matSelect.selectedIndex].value;
+
+            document.getElementById('confirm-name').value = nameInput.value || '';
+            document.getElementById('confirm-material').value = matText;
+            document.getElementById('confirm-qty').value = qtyInput.value || '';
+            document.getElementById('confirm-note').value = document.getElementById('withdraw-note').value || '';
+
+            document.getElementById('modal-confirm-withdraw').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showStatusModal(type) {
+            let modalId = '';
+            if (type === 'withdraw-success') {
+                modalId = 'modal-withdraw-success';
+                closeModal('modal-confirm-withdraw');
+                // Optinally reset form here
+            } else if (type === 'withdraw-error') {
+                modalId = 'modal-withdraw-error';
+            }
+
+            if (modalId) {
+                document.getElementById(modalId).style.display = 'flex';
+                setTimeout(() => {
+                    closeModal(modalId);
+                }, 2000);
+            }
+        }
+
+        // Initialize state
+        window.onload = function () {
+            updateSummary();
+        };
+    </script>
+</body>
+
+</html>
