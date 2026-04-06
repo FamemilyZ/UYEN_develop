@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U-VEND - รับงานพิมพ์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css?v=1.1">
+    <link rel="stylesheet" href="receive-print.css?v=1.1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+
+<body class="theme-online"> <!-- Start with online theme by default -->
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="nav-logo">
+                <img src="Item/Group%20466.png" alt="logo" style="height: 40px;"
+                    onerror="this.src='https://cdn-icons-png.flaticon.com/512/3214/3214341.png'">
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="receive-print.html">รับงานพิมพ์</a></li>
+                <li><a href="dashboard.html">จัดการผู้ใช้</a></li>
+                <li><a href="inventory.html">จัดการคลัง</a></li>
+                <li><a href="withdraw.html">เบิกวัสดุ</a></li>
+                <li><a href="receive-material.html">รับวัสดุ</a></li>
+
+                <li><a href="report.html">รายงานข้อมูล</a></li>
+            </ul>
+        </div>
+        <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="username" style="margin: 0; font-weight: 500;">User_Genrate</span>
+                <span class="role-badge"
+                    style="background-color: #6236FF; color: white; padding: 4px 12px; border-radius: 8px; font-size: 14px; font-weight: 600;">Employee</span>
+            </div>
+            <div style="width: 1px; height: 28px; background-color: #ADADAD;"></div>
+            <button class="btn-logout" onclick="window.location.href='index.html'">ออกจากระบบ</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="receive-main">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+            <!-- Left: Title + Toggle -->
+            <div class="page-header" style="margin-bottom: 0;">
+                <h1 class="page-title">รับงานพิมพ์</h1>
+                <div class="toggle-group">
+                    <button class="btn-toggle online" onclick="setTheme('online')">Online</button>
+                    <button class="btn-toggle walkin" onclick="setTheme('walkin')">Walk In</button>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="filters-row">
+            <div class="filters-left">
+                <div class="filter-group">
+                    <label>สถานะงานพิมพ์ :</label>
+                    <select id="statusFilter" class="filter-select" onchange="filterJobs()">
+                        <option value="ทั้งหมด">ทั้งหมด</option>
+                        <option value="รอพิมพ์เอกสาร">รอพิมพ์เอกสาร</option>
+                        <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
+                        <option value="ดำเนินการสำเร็จ">ดำเนินการสำเร็จ</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>วันที่สั่งพิมพ์ :</label>
+                    <div style="display: inline-flex; align-items: stretch; gap: 8px;">
+                        <div style="position: relative; display: inline-flex; align-items: center;">
+                            <input type="text" id="dateFilter" class="filter-input" placeholder="วัน - เดือน - ปี"
+                                style="padding-right: 28px; background-color: #fff; cursor: pointer; box-sizing: border-box;">
+                            <span
+                                style="position: absolute; right: 8px; color: #9ca3af; pointer-events: none; font-size: 13px;">📅</span>
+                        </div>
+                        <button onclick="resetDateFilter()" 
+                                style="background-color: #ffffff; color: #ff4d4f; border: 1px solid #ff4d4f; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; font-family: 'Prompt', sans-serif; white-space: nowrap; box-sizing: border-box;"
+                                onmouseover="this.style.backgroundColor='#fff1f0';"
+                                onmouseout="this.style.backgroundColor='#ffffff';">
+                            <span style="font-size: 13px; font-weight: bold; line-height: 1;">✕</span> รีเซ็ตปฏิทิน
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="jobs-container" id="jobs-list">
+            <!-- Job Card 1 -->
+            <div class="job-card">
+                <div class="job-header">
+                    <div class="job-header-item">
+                        <span class="job-header-label">คิว</span>
+                        <span class="job-header-value">Q_001</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">สถานะงานพิมพ์</span>
+                        <span class="badge-status bg-orange">กำลังดำเนินการ</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">รวมเงิน</span>
+                        <span class="job-header-value">57 บาท</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">วันที่สั่งพิมพ์</span>
+                        <span class="job-header-value">15 - 03 - 2026</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">วันและเวลารับงานพิมพ์</span>
+                        <span class="job-header-value">17 - 03 - 2026 / <span style="color: #460BF9;">09 :
+                                90</span></span>
+                    </div>
+
+                    <div class="job-header-right">
+                        <button class="btn-confirm-success">ยืนยันพิมพ์งานสำเร็จ</button>
+                    </div>
+                </div>
+                <table class="job-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%">ชื่อไฟล์</th>
+                            <th style="width: 15%">ประเภทงานพิมพ์</th>
+                            <th style="width: 10%">ขนาดเอกสาร</th>
+                            <th style="width: 15%">ประเภทเอกสาร</th>
+                            <th style="width: 10%">จำนวน(ชุด)</th>
+                            <th style="width: 10%">ราคา</th>
+                            <th style="width: 15%">ไฟล์เอกสาร</th>
+                            <th style="width: 10%">หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sad_Project2.PDF</td>
+                            <td><span class="text-color-green">สี</span></td>
+                            <td>A4</td>
+                            <td>ร้อยปอนด์</td>
+                            <td>1</td>
+                            <td>17</td>
+                            <td><button class="btn-download">⬇ ดาวโหลดไฟล์</button></td>
+                            <td class="text-color-red" style="font-size: 11px;"
+                                data-fulltext="ปริ้นแค่ครึ่งหน้าเถอะจ้าาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาา">
+                                <span class="remark-content">ปริ้นแค่ครึ่งหน้าเถอะจ้าาา</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Job Card 2 -->
+            <div class="job-card">
+                <div class="job-header">
+                    <div class="job-header-item">
+                        <span class="job-header-label">คิว</span>
+                        <span class="job-header-value">Q_002</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">สถานะงานพิมพ์</span>
+                        <span class="badge-status bg-blue">รอพิมพ์เอกสาร</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">รวมเงิน</span>
+                        <span class="job-header-value">57 บาท</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">วันที่สั่งพิมพ์</span>
+                        <span class="job-header-value">15 - 03 - 2026</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">วันและเวลารับงานพิมพ์</span>
+                        <span class="job-header-value">17 - 03 - 2026 / <span style="color: #460BF9;">09 :
+                                90</span></span>
+                    </div>
+
+                    <div class="job-header-right">
+                        <button class="btn-confirm-success">ยืนยันพิมพ์งานสำเร็จ</button>
+                    </div>
+                </div>
+                <table class="job-table">
+                    <thead>
+                        <!-- omitted to match design, design has it but we should probably put headers since they are in the image -->
+                        <tr>
+                            <th style="width: 15%">ชื่อไฟล์</th>
+                            <th style="width: 15%">ประเภทงานพิมพ์</th>
+                            <th style="width: 10%">ขนาดเอกสาร</th>
+                            <th style="width: 15%">ประเภทเอกสาร</th>
+                            <th style="width: 10%">จำนวน(ชุด)</th>
+                            <th style="width: 10%">ราคา</th>
+                            <th style="width: 15%">ไฟล์เอกสาร</th>
+                            <th style="width: 10%">หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sad_Project2.PDF</td>
+                            <td>ขาว - ดำ</td>
+                            <td>A4</td>
+                            <td>ร้อยปอนด์</td>
+                            <td>1</td>
+                            <td>17</td>
+                            <td><button class="btn-download downloaded">⬇ ดาวโหลดไฟล์</button></td>
+                            <td class="text-color-red" data-fulltext="-">
+                                <span class="remark-content">-</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Job Card 3 -->
+            <div class="job-card">
+                <div class="job-header">
+                    <div class="job-header-item">
+                        <span class="job-header-label">คิว</span>
+                        <span class="job-header-value">Q_003</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">สถานะงานพิมพ์</span>
+                        <span class="badge-status bg-green">ดำเนินการสำเร็จ</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">รวมเงิน</span>
+                        <span class="job-header-value">57 บาท</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">วันที่สั่งพิมพ์</span>
+                        <span class="job-header-value">15 - 03 - 2026</span>
+                    </div>
+                    <div class="job-header-divider"></div>
+                    <div class="job-header-item">
+                        <span class="job-header-label">วันและเวลารับงานพิมพ์</span>
+                        <span class="job-header-value">17 - 03 - 2026 / <span style="color: #460BF9;">09 :
+                                90</span></span>
+                    </div>
+
+                    <div class="job-header-right">
+                        <button class="btn-confirm-success" disabled>ยืนยันพิมพ์งานสำเร็จ</button>
+                    </div>
+                </div>
+                <table class="job-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%">ชื่อไฟล์</th>
+                            <th style="width: 15%">ประเภทงานพิมพ์</th>
+                            <th style="width: 10%">ขนาดเอกสาร</th>
+                            <th style="width: 15%">ประเภทเอกสาร</th>
+                            <th style="width: 10%">จำนวน(ชุด)</th>
+                            <th style="width: 10%">ราคา</th>
+                            <th style="width: 15%">ไฟล์เอกสาร</th>
+                            <th style="width: 10%">หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sad_Project2.PDF</td>
+                            <td><span class="text-color-green">สี</span></td>
+                            <td>A4</td>
+                            <td>ร้อยปอนด์</td>
+                            <td>1</td>
+                            <td>17</td>
+                            <td><button class="btn-download">⬇ ดาวโหลดไฟล์</button></td>
+                            <td class="text-color-red" data-fulltext="-">
+                                <span class="remark-content">-</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function setTheme(theme) {
+            document.body.className = '';
+            document.body.classList.add('theme-' + theme);
+        }
+
+        function resetDateFilter() {
+            const dateInput = document.getElementById("dateFilter");
+            if (dateInput && dateInput._flatpickr) {
+                dateInput._flatpickr.clear();
+            }
+        }
+
+        function filterJobs() {
+            const statusFilter = document.getElementById('statusFilter') ? document.getElementById('statusFilter').value : 'ทั้งหมด';
+            const dateFilter = document.getElementById('dateFilter') ? document.getElementById('dateFilter').value : '';
+
+            const jobCards = document.querySelectorAll('.job-card');
+
+            jobCards.forEach(card => {
+                let showCard = true;
+
+                // 1. Status Match
+                if (showCard && statusFilter !== 'ทั้งหมด') {
+                    const statusElement = card.querySelector('.badge-status');
+                    const statusText = statusElement ? statusElement.textContent.trim() : '';
+                    if (statusText !== statusFilter) showCard = false;
+                }
+
+                // 2. Date Match
+                if (showCard && dateFilter) {
+                    let dateMatch = false;
+                    const headerItems = card.querySelectorAll('.job-header-item');
+                    headerItems.forEach(item => {
+                        const label = item.querySelector('.job-header-label');
+                        if (label && label.textContent.includes('วันที่สั่งพิมพ์')) {
+                            const val = item.querySelector('.job-header-value');
+                            if (val) {
+                                const cardDateStr = val.textContent.trim(); // format: "15 - 03 - 2026"
+                                if (cardDateStr === dateFilter) {
+                                    dateMatch = true;
+                                }
+                            }
+                        }
+                    });
+                    if (!dateMatch) showCard = false;
+                }
+
+                card.style.display = showCard ? '' : 'none';
+            });
+            checkRemarks();
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            flatpickr("#dateFilter", {
+                dateFormat: "d - m - Y",
+                locale: "th",
+                onChange: function (selectedDates, dateStr, instance) {
+                    filterJobs();
+                }
+            });
+            checkRemarks();
+        });
+
+        function checkRemarks() {
+            const remarks = document.querySelectorAll('.remark-content');
+            remarks.forEach(span => {
+                const td = span.closest('td');
+                const fullText = td.getAttribute('data-fulltext');
+
+                // If text overflows, we just keep the CSS tooltip ready
+                if (span.scrollWidth > span.clientWidth) {
+                    td.classList.add('has-overflow');
+                } else {
+                    td.classList.remove('has-overflow');
+                }
+            });
+        }
+
+        window.addEventListener('resize', checkRemarks);
+    </script>
+</body>
+
+</html>

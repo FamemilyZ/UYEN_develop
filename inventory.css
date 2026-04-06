@@ -1,0 +1,291 @@
+/* Subtitle */
+.inventory-subtitle {
+    font-size: 20px;
+    font-weight: 800;
+    margin-top: 15px;
+    color: #000;
+}
+.inventory-subtitle span {
+    color: #0ea5e9; /* Light blue number */
+}
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #60a5fa; /* Blueish border */
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin-bottom: 30px;
+    background-color: #f8fafc; /* faint grayish-blue */
+}
+.sort-section {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+}
+.sort-item {
+    color: #9ca3af; /* Gray initially */
+    cursor: pointer;
+    margin-left: 20px;
+    transition: color 0.2s;
+    font-weight: 600;
+}
+.sort-item:hover {
+    color: #0ea5e9; /* Turns blue on hover as per F(x) instruction */
+}
+.sort-arrows {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-left: 4px;
+}
+
+/* Inventory Table specific overrides */
+.inventory-table th {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+    padding: 15px 10px;
+    border-bottom: 1px solid #bae6fd !important;
+    text-align: center;
+}
+.inventory-table td {
+    padding: 15px 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500; /* Adjusted to 500 for normal consistent thickness */
+    color: #1f2937;
+    border-bottom: 1px solid #f8fafc;
+}
+.inventory-table tr:last-child td {
+    border-bottom: none;
+}
+
+.item-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 2px;
+}
+.item-name, .item-type, .item-unit, .item-price {
+    font-weight: 500;
+    color: #1f2937;
+}
+
+/* Data stylings */
+.qty-remaining {
+    font-size: 14px; /* Slightly adjusted to match others better */
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.status-instock { 
+    color: #3b82f6 !important; /* blue */
+    font-weight: 500 !important;
+}
+.status-low { 
+    color: #f59e0b !important; /* orange (ใกล้หมด) */
+    font-weight: 500 !important;
+}
+.status-out { 
+    color: #ef4444 !important; /* red (หมด) */
+    font-weight: 500 !important;
+}
+
+/* Buttons */
+.btn-del {
+    background-color: transparent;
+    border: 1px solid #fca5a5;
+    color: #ef4444;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-del:hover {
+    background-color: #fef2f2;
+}
+
+.settings-gear { 
+    font-size: 20px; 
+    cursor: pointer; 
+    color: #1f2937; 
+    display: inline-block;
+    transition: transform 0.2s;
+}
+.settings-gear:hover { 
+    transform: rotate(45deg);
+}
+
+/* Image Upload Box */
+.img-upload-box {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    width: 100%;
+    margin: 0 auto 10px auto;
+    padding: 15px;
+    text-align: center;
+    position: relative;
+    background-color: #fff;
+    cursor: pointer;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.img-upload-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #9ca3af;
+    margin-bottom: 4px;
+}
+.img-upload-subtext {
+    font-size: 12px;
+    color: #cbd5e1;
+}
+.btn-upload-edit {
+    padding: 6px 18px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 13px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+/* Specific inputs for inventory modal */
+.inventory-modal-body {
+    padding: 15px 25px;
+}
+.inventory-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+.inventory-form-group label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+}
+.inventory-form-group input.blue-input {
+    padding: 6px 12px;
+    height: 36px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #3b82f6; /* Blue text */
+    outline: none;
+}
+.inventory-form-group input.blue-input:focus {
+    border-color: #3b82f6;
+}
+
+/* Status Modals */
+.status-modal {
+    width: 440px;
+    text-align: center;
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 0;
+}
+.status-header {
+    padding: 25px;
+    color: #fff;
+}
+.status-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+}
+.bg-green { background-color: #22c55e; }
+.bg-red { background-color: #ef4444; }
+.bg-orange { background-color: #f59e0b; }
+
+.status-body {
+    padding: 50px 20px 40px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.status-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+/* Buttons for inventory modal (to override dashboard defaults if any) */
+.btn-outline-green {
+    border: 1px solid #22c55e;
+    color: #22c55e;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-outline-green:hover {
+    background-color: #f0fdf4;
+}
+.btn-outline-red {
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-outline-red:hover {
+    background-color: #fef2f2;
+}
+
+/* Delete Modal Styles */
+.modal-header-red {
+    background-color: #ef4444;
+    color: white;
+}
+.gray-input {
+    padding: 6px 12px;
+    height: 36px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #6b7280;
+    background-color: #f9fafb;
+    outline: none;
+}
+.btn-outline-gray {
+    border: 1px solid #d1d5db;
+    color: #6b7280;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-outline-gray:hover {
+    background-color: #f3f4f6;
+}
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 900px) {
+    .filter-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .sort-section { display: flex; flex-direction: column; gap: 10px; }
+    .sort-item { margin-left: 0; }
+    .inventory-table { display: block; overflow-x: auto; white-space: nowrap; }
+    .img-upload-box { min-height: 80px; }
+    .status-modal, .inventory-modal { width: 90%; margin: 0 auto; text-align: center; }
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - UYEN</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- นำเข้า Font 'Inter' และ 'Montserrat' จาก Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- ส่วนของโลโก้ -->
+            <div class="logo-section">
+                <img src="Item/Group%20466.png" alt="UYEN Logo" class="logo-img">
+                <div class="subtitle">
+                    <span class="line"></span>
+                    <span class="subtitle-text">FOR EMPLOYEE</span>
+                    <span class="line"></span>
+                </div>
+            </div>
+
+            <!-- ส่วนของแบบฟอร์มสมัครสมาชิก -->
+            <form class="form">
+                <div class="input-group">
+                    <label>USERNAME</label>
+                    <input type="text" placeholder="" id="signup-username" maxlength="50" oninput="validateUsername(this)">
+                </div>
+
+                <div class="input-group">
+                    <label>EMAIL</label>
+                    <input type="text" id="signup-email" placeholder="example@email.com" autocomplete="off" maxlength="100" oninput="validateEmail(this)">
+                </div>
+
+                <div class="input-group">
+                    <label>PASSWORD</label>
+                    <div class="password-wrapper">
+                        <input type="password" placeholder="" id="signup-pwd" autocomplete="off" maxlength="100" minlength="5" oninput="validatePassword(this)">
+                        <span class="show-text" onclick="togglePassword('signup-pwd', this)">SHOW</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>CONFIRM PASSWORD</label>
+                    <div class="password-wrapper">
+                        <input type="password" placeholder="" id="signup-confirm" autocomplete="off" maxlength="100" minlength="5" oninput="validatePassword(this)">
+                        <span class="show-text" onclick="togglePassword('signup-confirm', this)">SHOW</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>PHONE NO.</label>
+                    <input type="tel" placeholder="000 - 000 - 0000" maxlength="16" oninput="formatPhoneNumber(this)">
+                </div>
+
+                <div class="input-group">
+                    <label class="normal-case-label">Role</label>
+                    <div class="select-wrapper">
+                        <!-- ส่วนของระบบเลือกบทบาท: เลือกได้แค่พนักงานกับเจ้าของร้าน -->
+                        <select id="signup-role">
+                            <option value="" disabled selected hidden>เลือกตำแหน่งงาน</option>
+                            <option value="พนักงาน">พนักงาน</option>
+                            <option value="เจ้าของร้าน">เจ้าของร้าน</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ปรับปุ่มให้มีระยะห่างด้านบนมากขึ้นตามดีไซน์รูปที่ 2 -->
+                <button type="button" class="btn-primary" style="margin-top: 15px;" onclick="handleSignup()">SIGN UP NOW</button>
+            </form>
+
+            <!-- ลิงก์กลับไปหน้า Login -->
+            <div class="footer-link">
+                <p>Have Account ? <a href="index.html">Login Here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- utils.js: showValidationError, isValidEmail, togglePassword, validateUsername,
+         validatePassword, validateEmail, formatPhoneNumber -->
+    <script src="utils.js"></script>
+    <script>
+        // ─── Sign Up Handler ─────────────────────────────────────────────────────
+        function handleSignup() {
+            const userEl    = document.getElementById('signup-username');
+            const emailEl   = document.getElementById('signup-email');
+            const pwdEl     = document.getElementById('signup-pwd');
+            const confirmEl = document.getElementById('signup-confirm');
+            const phoneEl   = document.querySelector('input[type="tel"]');
+            const roleEl    = document.getElementById('signup-role');
+
+            const username = userEl.value.trim();
+            const email    = emailEl ? emailEl.value.trim() : '';
+            const pwd      = pwdEl.value;
+            const confirm  = confirmEl.value;
+            const phoneRaw = phoneEl ? phoneEl.value.replace(/\D/g, '') : '';
+
+            if (username.length < 1) {
+                showValidationError(userEl, 'กรุณากรอก Username อย่างน้อย 1 ตัวอักษร'); return;
+            }
+            if (!email) {
+                showValidationError(emailEl, 'กรุณากรอก Email'); return;
+            }
+            if (!isValidEmail(email)) {
+                showValidationError(emailEl, 'รูปแบบ Email ไม่ถูกต้อง (เช่น name@example.com)'); return;
+            }
+            if (pwd.length < 5) {
+                showValidationError(pwdEl, 'Password ต้องมีอย่างน้อย 5 ตัวอักษร'); return;
+            }
+            if (pwd !== confirm) {
+                showValidationError(confirmEl, 'Password และ Confirm Password ไม่ตรงกัน'); return;
+            }
+            if (phoneRaw.length > 0 && phoneRaw.length !== 10) {
+                showValidationError(phoneEl, `เบอร์โทรศัพท์ต้องมี 10 หลักพอดี (ปัจจุบัน ${phoneRaw.length} หลัก)`); return;
+            }
+            if (roleEl && !roleEl.value) {
+                showValidationError(roleEl, 'กรุณาเลือกตำแหน่งงาน'); return;
+            }
+            // ผ่านทุกเงื่อนไข — แสดง Toast แล้ว redirect
+            showValidationError(null, 'สมัครสำเร็จ! กำลังพาคุณไปหน้า Login...');
+            setTimeout(() => window.location.href = 'index.html', 2000);
+        }
+    </script>
+</body>
+
+</html>

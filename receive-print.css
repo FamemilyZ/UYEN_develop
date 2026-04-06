@@ -1,0 +1,342 @@
+/* Receive Print Job Specific Styles */
+
+/* Base Layout */
+.receive-main {
+    padding: 30px;
+}
+
+.page-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    margin-top: -10px;
+    /* ย้ายขึ้นไปข้างบนนิดนึงตามรีเควส */
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    /* ลด margin เพื่อให้ปุ่มอยู่ใกล้คำว่ารับงานพิมพ์ */
+    color: #1a1a1a;
+}
+
+/* Toggles Segmented Control */
+.toggle-group {
+    display: inline-flex;
+    background-color: #f1f5f9;
+    /* Slate 100 bg */
+    border-radius: 50px;
+    padding: 3px;
+    gap: 0;
+    /* ติดกัน */
+}
+
+.btn-toggle {
+    padding: 6px 30px;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    color: #94a3b8;
+    /* Slate 400 */
+}
+
+/* Online Theme Default Variables */
+:root {
+    --theme-primary: #3b82f6;
+    /* Blue */
+    --theme-light: #eff6ff;
+    --theme-border: #bfdbfe;
+    --theme-text: #2563eb;
+}
+
+/* Walk In Theme Override */
+body.theme-walkin {
+    --theme-primary: #f97316;
+    /* Orange */
+    --theme-light: #fff7ed;
+    --theme-border: #fdba74;
+    --theme-text: #ea580c;
+}
+
+/* Toggle Active States */
+body.theme-online .btn-toggle.online {
+    background-color: #ffffff;
+    color: var(--theme-text);
+    border-color: var(--theme-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-online .btn-toggle.walkin {
+    color: #94a3b8;
+    border-color: transparent;
+}
+
+body.theme-walkin .btn-toggle.walkin {
+    background-color: #ffffff;
+    color: var(--theme-text);
+    border-color: var(--theme-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-walkin .btn-toggle.online {
+    color: #94a3b8;
+    border-color: transparent;
+}
+
+/* Filters */
+.filters-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    font-size: 12px;
+}
+
+.filters-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-input,
+.filter-select {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: #4b5563;
+    outline: none;
+}
+
+.filter-input[type="date"] {
+    padding: 5px 10px;
+}
+
+
+/* Job Cards */
+.job-card {
+    background: #fff;
+    border: 1px solid var(--theme-border);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.job-header {
+    background-color: var(--theme-light);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid var(--theme-border);
+    font-size: 14px;
+}
+
+.job-header-item {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.job-header-label {
+    color: #1f2937;
+    margin-right: 8px;
+}
+
+.job-header-value {
+    color: var(--theme-text);
+}
+
+.job-header-divider {
+    width: 1px;
+    height: 15px;
+    background-color: #d1d5db;
+}
+
+.job-header-right {
+    margin-left: auto;
+}
+
+/* Job Table */
+.job-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.job-table th {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1f2937;
+    text-align: center;
+    padding: 15px 10px;
+}
+
+.job-table td {
+    padding: 15px 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 400;
+    color: #1f2937;
+}
+
+.job-table td:last-child {
+    color: #ef4444;
+    position: relative;
+    max-width: 120px;
+}
+
+/* Remark content styling */
+.remark-content {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+/* Tooltip Styling */
+.job-table td:last-child::after {
+    display: none;
+    content: attr(data-fulltext);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    white-space: normal;
+    width: 250px;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    margin-top: 10px;
+    pointer-events: none;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.job-table td:last-child.has-overflow:hover::after {
+    display: block;
+}
+
+/* Tooltip arrow */
+.job-table td:last-child::before {
+    display: none;
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-bottom-color: #333;
+    margin-top: -6px;
+    z-index: 1001;
+    pointer-events: none;
+}
+
+.job-table td:last-child.has-overflow:hover::before {
+    display: block;
+}
+
+/* Badges & Buttons */
+.badge-status {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: white;
+}
+
+.bg-orange {
+    background-color: #f97316;
+}
+
+.bg-blue {
+    background-color: #3b82f6;
+}
+
+.bg-green {
+    background-color: #22c55e;
+}
+
+.btn-confirm-success {
+    background-color: #22c55e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 15px;
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-confirm-success:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.btn-download {
+    background-color: #9ca3af;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-download.downloaded {
+    background-color: #22c55e;
+}
+
+.text-color-green {
+    color: #22c55e;
+}
+
+.text-color-purple {
+    color: #a855f7;
+}
+
+.text-color-blue {
+    color: #3b82f6;
+}
+
+.text-color-red {
+    color: #ef4444;
+}
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 900px) {
+    .receive-main { padding: 15px; }
+    .page-title { font-size: 24px; }
+    .filters-row { flex-direction: column; align-items: stretch; gap: 15px; }
+    .filters-left { flex-direction: column; align-items: stretch; width: 100%; gap: 10px; }
+    .filter-group { width: 100%; flex-direction: column; align-items: stretch; gap: 5px; }
+    .filter-input, .filter-select { width: 100%; }
+    .job-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .job-header-divider { display: none; }
+    .job-header-right { margin-left: 0; width: 100%; }
+    .btn-confirm-success { width: 100%; }
+    .job-table { display: block; overflow-x: auto; white-space: nowrap; }
+    .job-table th, .job-table td { padding: 10px 5px; }
+    .toggle-group { width: 100%; display: flex; }
+    .btn-toggle { flex: 1; text-align: center; }
+}

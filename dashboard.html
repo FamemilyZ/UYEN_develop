@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UYEN - Dashboard</title>
+    <!-- Fonts: Inter and Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="nav-logo">
+                <img src="Item/Group%20466.png" alt="logo" style="height: 40px;"
+                    onerror="this.src='https://cdn-icons-png.flaticon.com/512/3214/3214341.png'">
+            </div>
+            <ul class="nav-links">
+                <li><a href="receive-print.html">รับงานพิมพ์</a></li>
+                <li class="active"><a href="dashboard.html">จัดการผู้ใช้</a></li>
+                <li><a href="inventory.html">จัดการคลัง</a></li>
+                <li><a href="withdraw.html">เบิกวัสดุ</a></li>
+                <li><a href="receive-material.html">รับวัสดุ</a></li>
+
+                <li><a href="report.html">รายงานข้อมูล</a></li>
+            </ul>
+        </div>
+        <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="username" style="margin: 0; font-weight: 500;">User_Genrate</span>
+                <span class="role-badge"
+                    style="background-color: #6236FF; color: white; padding: 4px 12px; border-radius: 8px; font-size: 14px; font-weight: 600;">Employee</span>
+            </div>
+            <div style="width: 1px; height: 28px; background-color: #ADADAD;"></div>
+            <button class="btn-logout" onclick="window.location.href='index.html'">ออกจากระบบ</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 id="page-title">จัดการผู้ใช้งาน</h1>
+        </div>
+
+        <!-- Controls (Tabs + Search) -->
+        <div class="page-controls">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab(1)" id="tab1-btn">จัดการข้อมูลผู้ใช้งาน</button>
+                <button class="tab-btn" onclick="switchTab(2)" id="tab2-btn">จัดการข้อมูลพนักงาน</button>
+            </div>
+        </div>
+
+        <!-- Table View 1 (Users) -->
+        <div class="table-container" id="view-users">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">USER ID</th>
+                        <th style="width: 30%;">ชื่อผู้ใช้</th>
+                        <th style="width: 20%;">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                สถานะ
+                                <div style="display: flex; flex-direction: column; gap: 2px;">
+                                    <button class="sort-up" onclick="sortByStatus('asc')" title="ปกติ">▲</button>
+                                    <button class="sort-down" onclick="sortByStatus('desc')"
+                                        title="Blacklist">▼</button>
+                                </div>
+                            </div>
+                        </th>
+                        <th style="width: 30%;">ดำเนินการ</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    <!-- Javascript will render rows here from state -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Table View 2 (Employees) -->
+        <div class="table-container" id="view-employees" style="display: none;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">USER ID</th>
+                        <th style="width: 25%;">ชื่อผู้ใช้</th>
+                        <th style="width: 20%;">ตำแหน่ง</th>
+                        <th style="width: 15%;">เบอร์</th>
+                        <th style="width: 25%;">ดำเนินการ</th>
+                    </tr>
+                </thead>
+                <tbody id="employees-tbody">
+                    <!-- Javascript will render rows here from state -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modals -->
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="modal-delete" style="display: none;">
+        <div class="modal delete-modal">
+            <div class="modal-header modal-header-red">
+                <h2>ยืนยันการลบ</h2>
+            </div>
+            <div class="modal-body delete-body">
+                <p>คุณต้องการลบ ชื่อผู้ใช้ : <span id="delete-username-text" style="font-weight: 700;"></span> หรือไม่?
+                </p>
+                <div class="modal-actions-right">
+                    <button class="btn-action btn-delete btn-delete-confirm" onclick="confirmDelete()">🗑 ลบ</button>
+                    <button class="btn-action btn-cancel" onclick="closeModal('modal-delete')">ยกเลิก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="modal-edit" style="display: none;">
+        <div class="modal" style="padding: 0; max-width: 600px;">
+            <div class="modal-header modal-header-blue"
+                style="background-color: #4f87ff; padding: 25px 30px; color: white;">
+                <h2 id="edit-modal-title" style="font-size: 28px; font-weight: 700; margin-bottom: 5px;">Somyot</h2>
+                <p id="edit-modal-subtitle" style="font-size: 14px; font-weight: 500;">แก้ไขผู้ใช้งาน</p>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <form id="edit-form" class="form-grid" style="align-items: end;"
+                    onsubmit="event.preventDefault(); confirmSaveUserData();">
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" id="edit-username" value="Somyot" placeholder="Username" maxlength="50"
+                            oninput="validateUsername(this)">
+                    </div>
+                    <div class="input-group" id="group-role">
+                        <label>ตำแหน่งงาน</label>
+                        <div class="select-wrapper">
+                            <select id="edit-role">
+                                <option value="" disabled selected hidden>เลือกตำแหน่งงาน</option>
+                                <option value="Admin">Admin</option>
+                                <option value="พนักงาน">พนักงาน</option>
+                                <option value="เจ้าของร้าน">เจ้าของร้าน</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="text" id="edit-email" placeholder="example@email.com" maxlength="100"
+                            autocomplete="off"
+                            oninput="validateEmail(this)">
+                    </div>
+                    <div class="input-group">
+                        <label>Phone No.</label>
+                        <input type="tel" id="edit-phone" maxlength="16" placeholder="000 - 000 - 0000"
+                            oninput="formatPhoneNumber(this)">
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="text" id="edit-password" placeholder="Password" maxlength="100" minlength="5"
+                            oninput="validatePassword(this)">
+                    </div>
+
+                    <div class="edit-footer"
+                        style="display: flex; justify-content: flex-end; align-items: flex-end; gap: 15px; height: 100%;">
+                        <div class="input-group" id="status-group-container"
+                            style="gap: 12px; margin-right: auto; flex-direction: row; align-items: center; display: none;">
+                            <label style="font-size: 14px; color: #333; margin: 0;">สถานะ</label>
+                            <div class="toggle-container" style="margin: 0;">
+                                <button type="button" class="toggle-btn toggle-normal active"
+                                    onclick="setToggle(this)">ปกติ</button>
+                                <button type="button" class="toggle-btn toggle-blacklist"
+                                    onclick="setToggle(this)">Blacklist</button>
+                            </div>
+                        </div>
+
+                        <div class="modal-actions-right" style="margin-top: 0; display: flex; gap: 10px;">
+                            <button type="submit" class="btn-action"
+                                style="background-color: #dcfce7; color: #16a34a; border: 1px solid #22c55e; border-radius: 6px; padding: 8px 20px; font-weight: 700; font-size: 13px;">บันทึก</button>
+                            <button type="button" class="btn-action" onclick="confirmCancelEdit()"
+                                style="background-color: #fee2e2; color: #ef4444; border: 1px solid #ef4444; border-radius: 6px; padding: 8px 20px; font-weight: 700; font-size: 13px;">ปิด</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Confirm Save Modal -->
+    <div class="modal-overlay" id="modal-confirm-save" style="display: none; z-index: 2000;">
+        <div class="modal" style="border-radius: 12px; overflow: hidden; border: none; max-width: 380px; padding: 0;">
+            <div style="background-color: #26F977; padding: 20px 25px; color: white;">
+                <h2 style="font-size: 20px; font-weight: 700; margin: 0;">ยืนยันการบันทึกข้อมูล</h2>
+            </div>
+            <div style="padding: 30px 25px; background-color: #fff; display: flex; flex-direction: column;">
+                <h3 style="font-size: 16px; font-weight: 500; color: #000; margin-bottom: 30px; text-align: left; line-height: 1.6;">
+                    คุณต้องการบันทึกข้อมูลของ <br> <span id="confirm-username" style="color: #26F977; font-weight: 700;">Username</span> ใช่หรือไม่ ?
+                </h3>
+                <div class="modal-actions-right" style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="btn-action" style="background-color: #dcfce7; color: #16a34a; border: 1px solid #22c55e; border-radius: 6px; padding: 8px 16px; font-weight: 700; font-size: 13px;" onclick="executeSaveUserData()">บันทึกข้อมูลผู้ใช้</button>
+                    <button type="button" class="btn-action" style="background-color: #fee2e2; color: #ef4444; border: 1px solid #ef4444; border-radius: 6px; padding: 8px 16px; font-weight: 700; font-size: 13px;" onclick="abortSaveUserData()">ยกเลิก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="modal-success" style="display: none; z-index: 2000;">
+        <div class="modal" style="border-radius: 12px; overflow: hidden; border: none; max-width: 260px; text-align: center;">
+            <div style="background-color: #26F977; padding: 15px; color: white;">
+                <h2 style="font-size: 18px; font-weight: 700; margin: 0;">บันทึกข้อมูลสำเร็จ</h2>
+            </div>
+            <div style="padding: 30px 15px 25px; background-color: #fff; display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; background-color: #26F977; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+                    <div style="width: 14px; height: 26px; border: solid white; border-width: 0 4px 4px 0; transform: rotate(45deg); margin-bottom: 6px;"></div>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 8px;">ข้อมูลได้รับการบันทึกแล้ว</h3>
+                <p style="color: #9ca3af; font-size: 12px; font-weight: 500;">หน้าต่างจะถูกปิดใน 2 วินาที</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Confirm Modal -->
+    <div class="modal-overlay" id="modal-cancel-confirm" style="display: none; z-index: 2000;">
+        <div class="modal" style="border-radius: 12px; overflow: hidden; border: none; max-width: 380px; padding: 0;">
+            <div style="background-color: #F30606; padding: 20px 25px; color: white;">
+                <h2 style="font-size: 20px; font-weight: 700; margin: 0;">ยืนยันการยกเลิกบันทึกข้อมูล</h2>
+            </div>
+            <div style="padding: 30px 25px; background-color: #fff; display: flex; flex-direction: column;">
+                <h3 style="font-size: 16px; font-weight: 500; color: #000; margin-bottom: 30px; text-align: left; line-height: 1.6;">
+                    คุณต้องยืนยันการยกเลิกบันทึกข้อมูลของ <br> <span id="cancel-confirm-username" style="color: #F30606; font-weight: 700;">Username</span> ใช่หรือไม่ ?
+                </h3>
+                <div class="modal-actions-right" style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="btn-action" style="background-color: #fee2e2; color: #ef4444; border: 1px solid #ef4444; border-radius: 6px; padding: 8px 16px; font-weight: 700; font-size: 13px;" onclick="executeCancelEdit()">ยกเลิกบันทึกข้อมูลผู้ใช้</button>
+                    <button type="button" class="btn-action" style="background-color: #fff; color: #ef4444; border: 1px solid #ef4444; border-radius: 6px; padding: 8px 16px; font-weight: 700; font-size: 13px;" onclick="abortCancelEdit()">ยกเลิก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Success Modal -->
+    <div class="modal-overlay" id="modal-cancel-success" style="display: none; z-index: 2000;">
+        <div class="modal" style="border-radius: 12px; overflow: hidden; border: none; max-width: 260px; text-align: center;">
+            <div style="background-color: #F30606; padding: 15px; color: white;">
+                <h2 style="font-size: 18px; font-weight: 700; margin: 0;">ยกเลิกการบันทึกข้อมูลสำเร็จ</h2>
+            </div>
+            <div style="padding: 30px 15px 25px; background-color: #fff; display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; background-color: #F30606; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 8px;">ยกเลิกการบันทึกข้อมูลสำเร็จ</h3>
+                <p style="color: #9ca3af; font-size: 12px; font-weight: 500;">หน้าต่างจะถูกปิดใน 2 วินาที</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Success Modal -->
+    <div class="modal-overlay" id="modal-delete-success" style="display: none; z-index: 2000;">
+        <div class="modal" style="border-radius: 12px; overflow: hidden; border: none; max-width: 260px; text-align: center;">
+            <div style="background-color: #F30606; padding: 15px; color: white;">
+                <h2 style="font-size: 18px; font-weight: 700; margin: 0;">ลบข้อมูลสำเร็จ</h2>
+            </div>
+            <div style="padding: 30px 15px 25px; background-color: #fff; display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; background-color: #F30606; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 8px;">ลบข้อมูลผู้ใช้สำเร็จ</h3>
+                <p style="color: #9ca3af; font-size: 12px; font-weight: 500;">หน้าต่างจะถูกปิดใน 2 วินาที</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- utils.js: showValidationError, isValidEmail, togglePassword, validateUsername,
+         validatePassword, validateEmail, formatPhoneNumber -->
+    <script src="utils.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        function switchTab(tabIndex) {
+            const btn1 = document.getElementById('tab1-btn');
+            const btn2 = document.getElementById('tab2-btn');
+            const view1 = document.getElementById('view-users');
+            const view2 = document.getElementById('view-employees');
+            const title = document.getElementById('page-title');
+
+            if (tabIndex === 1) {
+                btn1.classList.add('active');
+                btn2.classList.remove('active');
+                view1.style.display = 'block';
+                view2.style.display = 'none';
+                title.innerText = 'จัดการผู้ใช้งาน';
+            } else {
+                btn2.classList.add('active');
+                btn1.classList.remove('active');
+                view2.style.display = 'block';
+                view1.style.display = 'none';
+                title.innerText = 'จัดการข้อมูลพนักงาน';
+            }
+        }
+
+        function openModal(modalId, username = '', role = '') {
+            document.getElementById(modalId).style.display = 'flex';
+
+            if (modalId === 'modal-delete' && username) {
+                document.getElementById('delete-username-text').innerText = username;
+            }
+        }
+
+        function setToggle(btn) {
+            const container = btn.parentElement;
+            const buttons = container.querySelectorAll('.toggle-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        let activeSortStatus = '';
+
+        function sortByStatus(direction) {
+            if (activeSortStatus === direction) {
+                activeSortStatus = '';
+                document.querySelectorAll('.sort-up, .sort-down').forEach(btn => btn.classList.remove('active'));
+                // Restore original order by user ID
+                users.sort((a, b) => a.id.localeCompare(b.id));
+            } else {
+                activeSortStatus = direction;
+                document.querySelectorAll('.sort-up, .sort-down').forEach(btn => btn.classList.remove('active'));
+                if (direction === 'asc') {
+                    document.querySelector('.sort-up').classList.add('active');
+                    users.sort((a, b) => {
+                        if (a.status === b.status) return a.id.localeCompare(b.id);
+                        return a.status === 'ปกติ' ? -1 : 1;
+                    });
+                } else if (direction === 'desc') {
+                    document.querySelector('.sort-down').classList.add('active');
+                    users.sort((a, b) => {
+                        if (a.status === b.status) return a.id.localeCompare(b.id);
+                        return a.status === 'Blacklist' ? -1 : 1;
+                    });
+                }
+            }
+            renderTables();
+        }
+    </script>
+</body>
+
+</html>
